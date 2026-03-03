@@ -54,6 +54,9 @@ body {
   overflow: hidden;
   background: linear-gradient(180deg, #6db4ff 0%, #b7ddff 70%, #fef4d9 100%);
   transition: background 0.6s ease;
+  --mist-opacity: 0;
+  --mist-blur: 0px;
+  --streak-opacity: 0;
 }
 
 .scene::after {
@@ -186,6 +189,45 @@ body {
   filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.8));
 }
 
+.humidity,
+.streaks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.humidity {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
+  opacity: var(--mist-opacity);
+  filter: blur(var(--mist-blur));
+  transition: opacity 0.6s ease, filter 0.6s ease;
+  mix-blend-mode: screen;
+  z-index: 6;
+}
+
+.streaks {
+  opacity: var(--streak-opacity);
+  z-index: 7;
+}
+
+.streaks::before,
+.streaks::after {
+  content: "";
+  position: absolute;
+  inset: -20% 0;
+  background-image: repeating-linear-gradient(95deg, rgba(255, 255, 255, 0.35) 0 2px, transparent 2px 18px);
+  background-size: 60px 140px;
+  animation: streaks 16s linear infinite;
+  opacity: 0.55;
+}
+
+.streaks::after {
+  background-size: 90px 180px;
+  animation-duration: 22s;
+  background-position-x: 30px;
+  opacity: 0.35;
+}
+
 .glass {
   margin-top: 20px;
   padding: 20px 22px;
@@ -296,6 +338,11 @@ body {
   background: linear-gradient(180deg, #61738c 0%, #9bb3c8 70%, #cfd6dd 100%);
 }
 
+.scene[data-condition="rain"],
+.scene[data-condition="thunder"] {
+  --streak-opacity: 0.55;
+}
+
 .scene[data-condition="snow"] {
   background: linear-gradient(180deg, #c7d8ef 0%, #e8eef7 70%, #f8fbff 100%);
 }
@@ -390,6 +437,15 @@ body {
   }
   95% {
     opacity: 0;
+  }
+}
+
+@keyframes streaks {
+  from {
+    background-position-y: -120px;
+  }
+  to {
+    background-position-y: 120px;
   }
 }
 

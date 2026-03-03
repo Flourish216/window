@@ -8,6 +8,8 @@ const windowEl = document.querySelector(".window");
 
 const DEFAULT_CITY = "New York";
 
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
 const weatherMap = (code) => {
   if (code === 0) return "clear";
   if ([1, 2, 3].includes(code)) return "clouds";
@@ -32,6 +34,12 @@ const updateScene = ({ temperature, code, isDay, city, feels, wind, humidity }) 
   scene.dataset.condition = condition;
   scene.dataset.day = isDay ? "true" : "false";
   const round = (value) => (Number.isFinite(value) ? Math.round(value) : "--");
+  const humidityLevel = Number.isFinite(humidity) ? clamp((humidity - 55) / 40, 0, 1) : 0;
+  const rainBoost = condition === "rain" || condition === "thunder" ? 0.12 : 0;
+  const mistOpacity = clamp(0.05 + humidityLevel * 0.35 + rainBoost, 0, 0.7).toFixed(2);
+  const mistBlur = (humidityLevel * 8 + (rainBoost > 0 ? 2 : 0)).toFixed(1);
+  scene.style.setProperty("--mist-opacity", mistOpacity);
+  scene.style.setProperty("--mist-blur", `${mistBlur}px`);
   tempEl.textContent = `${round(temperature)}°`;
   cityEl.textContent = city ? city.toUpperCase() : "";
   metaEl.textContent = `Feels ${round(feels)}° • Wind ${round(wind)} km/h • Humidity ${round(humidity)}%`;
