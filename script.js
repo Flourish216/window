@@ -1,6 +1,7 @@
 const scene = document.getElementById("scene");
 const tempEl = document.getElementById("temp");
 const cityEl = document.getElementById("city");
+const metaEl = document.getElementById("meta");
 const form = document.getElementById("search");
 const input = document.getElementById("cityInput");
 const windowEl = document.querySelector(".window");
@@ -26,12 +27,14 @@ const setError = () => {
   setTimeout(() => windowEl.classList.remove("error"), 1200);
 };
 
-const updateScene = ({ temperature, code, isDay, city }) => {
+const updateScene = ({ temperature, code, isDay, city, feels, wind, humidity }) => {
   const condition = weatherMap(code);
   scene.dataset.condition = condition;
   scene.dataset.day = isDay ? "true" : "false";
-  tempEl.textContent = `${Math.round(temperature)}°`;
+  const round = (value) => (Number.isFinite(value) ? Math.round(value) : "--");
+  tempEl.textContent = `${round(temperature)}°`;
   cityEl.textContent = city ? city.toUpperCase() : "";
+  metaEl.textContent = `Feels ${round(feels)}° • Wind ${round(wind)} km/h • Humidity ${round(humidity)}%`;
 };
 
 const fetchCity = async (name) => {
@@ -46,13 +49,16 @@ const fetchCity = async (name) => {
 };
 
 const fetchWeather = async (lat, lon) => {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,is_day&timezone=auto`;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code,is_day,wind_speed_10m,relative_humidity_2m&timezone=auto`;
   const res = await fetch(url);
   if (!res.ok) throw new Error("weather");
   const data = await res.json();
   if (data.current) {
     return {
       temperature: data.current.temperature_2m,
+      feels: data.current.apparent_temperature,
+      wind: data.current.wind_speed_10m,
+      humidity: data.current.relative_humidity_2m,
       code: data.current.weather_code,
       isDay: data.current.is_day === 1,
     };
@@ -60,6 +66,9 @@ const fetchWeather = async (lat, lon) => {
   if (data.current_weather) {
     return {
       temperature: data.current_weather.temperature,
+      feels: data.current_weather.temperature,
+      wind: data.current_weather.windspeed,
+      humidity: null,
       code: data.current_weather.weathercode,
       isDay: data.current_weather.is_day === 1,
     };
