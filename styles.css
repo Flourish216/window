@@ -54,9 +54,13 @@ body {
   overflow: hidden;
   background: linear-gradient(180deg, #6db4ff 0%, #b7ddff 70%, #fef4d9 100%);
   transition: background 0.6s ease;
+  background-position: calc(50% + var(--px, 0px)) calc(50% + var(--py, 0px));
+  background-size: 120% 120%;
   --mist-opacity: 0;
   --mist-blur: 0px;
   --streak-opacity: 0;
+  --px: 0px;
+  --py: 0px;
 }
 
 .scene::after {
@@ -72,6 +76,8 @@ body {
   inset: 0;
   background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.55), transparent 45%);
   opacity: 0.7;
+  transform: translate(calc(var(--px) * 0.35), calc(var(--py) * 0.35));
+  transition: transform 0.2s ease;
 }
 
 .sun,
@@ -82,7 +88,8 @@ body {
   border-radius: 50%;
   top: 40px;
   right: 80px;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.4s ease, transform 0.2s ease;
+  transform: translate(calc(var(--px) * 0.5), calc(var(--py) * 0.4));
 }
 
 .sun {
@@ -106,7 +113,8 @@ body {
   left: -40px;
   filter: blur(0.3px);
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.4s ease, transform 0.2s ease;
+  transform: translate(calc(var(--px) * 0.85), calc(var(--py) * 0.55));
 }
 
 .cloud::before,
@@ -133,6 +141,7 @@ body {
   top: 160px;
   left: -80px;
   opacity: 0;
+  transform: translate(calc(var(--px) * 1.05), calc(var(--py) * 0.7));
 }
 
 .rain,

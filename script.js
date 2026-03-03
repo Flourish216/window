@@ -6,6 +6,51 @@ const form = document.getElementById("search");
 const input = document.getElementById("cityInput");
 const windowEl = document.querySelector(".window");
 
+const parallaxSurface = document.querySelector(".window");
+let parallaxFrame = null;
+let parallaxX = 0;
+let parallaxY = 0;
+let targetX = 0;
+let targetY = 0;
+
+const animateParallax = () => {
+  parallaxX += (targetX - parallaxX) * 0.08;
+  parallaxY += (targetY - parallaxY) * 0.08;
+  scene.style.setProperty("--px", `${parallaxX.toFixed(2)}px`);
+  scene.style.setProperty("--py", `${parallaxY.toFixed(2)}px`);
+  if (Math.abs(targetX - parallaxX) < 0.02 && Math.abs(targetY - parallaxY) < 0.02) {
+    parallaxX = targetX;
+    parallaxY = targetY;
+    scene.style.setProperty("--px", `${parallaxX.toFixed(2)}px`);
+    scene.style.setProperty("--py", `${parallaxY.toFixed(2)}px`);
+    parallaxFrame = null;
+    return;
+  }
+  parallaxFrame = requestAnimationFrame(animateParallax);
+};
+
+const queueParallax = () => {
+  if (!parallaxFrame) {
+    parallaxFrame = requestAnimationFrame(animateParallax);
+  }
+};
+
+parallaxSurface.addEventListener("pointermove", (event) => {
+  if (event.pointerType === "touch") return;
+  const rect = scene.getBoundingClientRect();
+  const relX = (event.clientX - rect.left) / rect.width - 0.5;
+  const relY = (event.clientY - rect.top) / rect.height - 0.5;
+  targetX = relX * 18;
+  targetY = relY * 14;
+  queueParallax();
+});
+
+parallaxSurface.addEventListener("pointerleave", () => {
+  targetX = 0;
+  targetY = 0;
+  queueParallax();
+});
+
 const DEFAULT_CITY = "New York";
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
