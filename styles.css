@@ -184,7 +184,6 @@ body {
   right: 120px;
   opacity: 0;
   filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.8));
-  animation: lightning 2.8s infinite;
 }
 
 .glass {
@@ -335,6 +334,7 @@ body {
 
 .scene[data-condition="thunder"] .bolt {
   opacity: 1;
+  animation: lightning 2.8s infinite;
 }
 
 .scene[data-day="false"] .sun {
