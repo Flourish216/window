@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Window</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="stage">
+      <section class="window" aria-live="polite">
+        <div class="frame">
+          <div class="scene" id="scene" data-condition="clear" data-day="true">
+            <div class="sky"></div>
+            <div class="sun" aria-hidden="true"></div>
+            <div class="moon" aria-hidden="true"></div>
+            <div class="cloud cloud-a" aria-hidden="true"></div>
+            <div class="cloud cloud-b" aria-hidden="true"></div>
+            <div class="rain" aria-hidden="true"></div>
+            <div class="snow" aria-hidden="true"></div>
+            <div class="fog" aria-hidden="true"></div>
+            <div class="bolt" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="glass">
+          <div class="readout" id="readout">
+            <div class="temp" id="temp">--°</div>
+            <div class="city" id="city">&nbsp;</div>
+          </div>
+          <form class="search" id="search" autocomplete="off">
+            <input
+              class="search-input"
+              id="cityInput"
+              name="city"
+              placeholder="find your city"
+              spellcheck="false"
+              aria-label="Find your city"
+            />
+            <button class="search-btn" type="submit" aria-label="Search">
+              <span class="dot"></span>
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>
