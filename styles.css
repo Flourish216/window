@@ -315,6 +315,50 @@ body {
   border-color: rgba(255, 255, 255, 0.8);
 }
 
+.sound-toggle {
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.sound-toggle::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  right: 10px;
+  top: 9px;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.sound-toggle:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+.window.sound-on .sound-toggle {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+.window.sound-on .sound-toggle::after {
+  opacity: 1;
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(255, 209, 125, 0.8);
+}
+
 .dot {
   width: 10px;
   height: 10px;
@@ -482,5 +526,9 @@ body {
 
   .search {
     width: 100%;
+  }
+
+  .sound-toggle {
+    align-self: flex-start;
   }
 }

@@ -5,6 +5,120 @@ const metaEl = document.getElementById("meta");
 const form = document.getElementById("search");
 const input = document.getElementById("cityInput");
 const windowEl = document.querySelector(".window");
+const soundToggle = document.getElementById("soundToggle");
+
+let audioCtx = null;
+let noiseSource = null;
+let masterGain = null;
+let rainGain = null;
+let windGain = null;
+let rainFilter = null;
+let windFilter = null;
+let soundEnabled = false;
+let suspendTimer = null;
+let currentSound = { condition: "clear", wind: 0 };
+
+const createNoiseSource = (context) => {
+  const buffer = context.createBuffer(1, context.sampleRate * 2, context.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < data.length; i += 1) {
+    data[i] = Math.random() * 2 - 1;
+  }
+  const source = context.createBufferSource();
+  source.buffer = buffer;
+  source.loop = true;
+  return source;
+};
+
+const initAudio = () => {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) return;
+  audioCtx = new AudioContext();
+  noiseSource = createNoiseSource(audioCtx);
+
+  rainFilter = audioCtx.createBiquadFilter();
+  rainFilter.type = "bandpass";
+  rainFilter.frequency.value = 1200;
+  rainFilter.Q.value = 0.7;
+
+  windFilter = audioCtx.createBiquadFilter();
+  windFilter.type = "lowpass";
+  windFilter.frequency.value = 420;
+  windFilter.Q.value = 0.6;
+
+  rainGain = audioCtx.createGain();
+  windGain = audioCtx.createGain();
+  masterGain = audioCtx.createGain();
+
+  rainGain.gain.value = 0;
+  windGain.gain.value = 0;
+  masterGain.gain.value = 0;
+
+  const lfo = audioCtx.createOscillator();
+  const lfoGain = audioCtx.createGain();
+  lfo.type = "sine";
+  lfo.frequency.value = 0.18;
+  lfoGain.gain.value = 240;
+  lfo.connect(lfoGain);
+  lfoGain.connect(rainFilter.frequency);
+
+  noiseSource.connect(rainFilter);
+  rainFilter.connect(rainGain);
+  rainGain.connect(masterGain);
+
+  noiseSource.connect(windFilter);
+  windFilter.connect(windGain);
+  windGain.connect(masterGain);
+
+  masterGain.connect(audioCtx.destination);
+
+  noiseSource.start();
+  lfo.start();
+};
+
+const updateSound = ({ condition, wind }) => {
+  if (!audioCtx || !rainGain || !windGain) return;
+  const rainOn = condition === "rain" || condition === "thunder";
+  const windLevel = Number.isFinite(wind) ? clamp(wind / 30, 0, 1) : 0;
+  const rainTarget = rainOn ? 0.12 : 0;
+  const windTarget = windLevel * 0.08 + (rainOn ? 0.02 : 0);
+  rainGain.gain.setTargetAtTime(rainTarget, audioCtx.currentTime, 0.8);
+  windGain.gain.setTargetAtTime(windTarget, audioCtx.currentTime, 1);
+};
+
+const setSoundEnabled = async (enabled) => {
+  if (!soundToggle) return;
+  if (enabled) {
+    if (suspendTimer) {
+      clearTimeout(suspendTimer);
+      suspendTimer = null;
+    }
+    if (!audioCtx) {
+      initAudio();
+    }
+    if (audioCtx && audioCtx.state !== "running") {
+      await audioCtx.resume();
+    }
+    soundEnabled = true;
+    windowEl.classList.add("sound-on");
+    soundToggle.setAttribute("aria-pressed", "true");
+    if (masterGain) {
+      masterGain.gain.setTargetAtTime(0.09, audioCtx.currentTime, 0.4);
+    }
+    updateSound(currentSound);
+  } else {
+    soundEnabled = false;
+    windowEl.classList.remove("sound-on");
+    soundToggle.setAttribute("aria-pressed", "false");
+    if (audioCtx && masterGain) {
+      masterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.2);
+      suspendTimer = setTimeout(() => {
+        audioCtx.suspend();
+      }, 350);
+    }
+  }
+};
+
 
 const parallaxSurface = document.querySelector(".window");
 let parallaxFrame = null;
@@ -88,6 +202,10 @@ const updateScene = ({ temperature, code, isDay, city, feels, wind, humidity }) 
   tempEl.textContent = `${round(temperature)}°`;
   cityEl.textContent = city ? city.toUpperCase() : "";
   metaEl.textContent = `Feels ${round(feels)}° • Wind ${round(wind)} km/h • Humidity ${round(humidity)}%`;
+  currentSound = { condition, wind: Number.isFinite(wind) ? wind : 0 };
+  if (soundEnabled) {
+    updateSound(currentSound);
+  }
 };
 
 const fetchCity = async (name) => {
@@ -145,6 +263,12 @@ const loadWeather = async (name) => {
     setLoading(false);
   }
 };
+
+if (soundToggle) {
+  soundToggle.addEventListener("click", () => {
+    setSoundEnabled(!soundEnabled);
+  });
+}
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
