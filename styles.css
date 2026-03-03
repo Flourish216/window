@@ -102,9 +102,20 @@ body {
 }
 
 .moon {
-  background: radial-gradient(circle at 30% 30%, #f0f4ff, #b3c3ff 70%);
-  box-shadow: 0 0 40px rgba(163, 185, 255, 0.7);
+  position: absolute;
+  background: radial-gradient(circle at 30% 30%, #f5f7ff, #b3c3ff 70%);
+  box-shadow: 0 0 36px rgba(163, 185, 255, 0.7);
   opacity: 0;
+  overflow: hidden;
+}
+
+.moon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 20% 20%, rgba(27, 36, 64, 0.95), rgba(27, 36, 64, 1));
+  transform: translateX(32%);
 }
 
 .cloud {
