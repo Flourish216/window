@@ -199,8 +199,17 @@ const updateScene = ({ temperature, code, isDay, city, feels, wind, humidity }) 
   const rainBoost = condition === "rain" || condition === "thunder" ? 0.12 : 0;
   const mistOpacity = clamp(0.05 + humidityLevel * 0.35 + rainBoost, 0, 0.7).toFixed(2);
   const mistBlur = (humidityLevel * 8 + (rainBoost > 0 ? 2 : 0)).toFixed(1);
+  const windLevel = Number.isFinite(wind) ? clamp(wind / 30, 0, 1) : 0;
+  const flagTilt = (-16 + windLevel * 16).toFixed(1);
+  const flagSway = (2 + windLevel * 6).toFixed(1);
+  const flagStretch = (0.7 + windLevel * 0.45).toFixed(2);
+  const flagSpeed = (4.6 - windLevel * 2.2).toFixed(2);
   scene.style.setProperty("--mist-opacity", mistOpacity);
   scene.style.setProperty("--mist-blur", `${mistBlur}px`);
+  scene.style.setProperty("--flag-tilt", flagTilt);
+  scene.style.setProperty("--flag-sway", flagSway);
+  scene.style.setProperty("--flag-stretch", flagStretch);
+  scene.style.setProperty("--flag-speed", `${flagSpeed}s`);
   tempEl.textContent = `${round(temperature)}°`;
   cityEl.textContent = city ? city.toUpperCase() : "";
   metaEl.textContent = `Feels ${round(feels)}° • Wind ${round(wind)} km/h • Humidity ${round(humidity)}%`;

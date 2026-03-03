@@ -61,6 +61,10 @@ body {
   --streak-opacity: 0;
   --px: 0px;
   --py: 0px;
+  --flag-tilt: -12;
+  --flag-sway: 4;
+  --flag-stretch: 0.75;
+  --flag-speed: 4.2s;
 }
 
 .scene::after {
@@ -196,6 +200,39 @@ body {
   right: 120px;
   opacity: 0;
   filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.8));
+}
+
+.flag {
+  position: absolute;
+  right: 36px;
+  bottom: 26px;
+  width: 90px;
+  height: 100px;
+  z-index: 4;
+}
+
+.flag .pole {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 2px;
+  height: 82px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
+}
+
+.flag .cloth {
+  position: absolute;
+  right: 2px;
+  bottom: 58px;
+  width: 56px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.65);
+  clip-path: polygon(100% 50%, 0 0, 0 100%);
+  transform-origin: 100% 50%;
+  transform: rotate(calc(var(--flag-tilt) * 1deg)) scaleX(var(--flag-stretch));
+  animation: flag-sway var(--flag-speed) ease-in-out infinite;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
 }
 
 .humidity,
@@ -499,6 +536,16 @@ body {
   }
   to {
     background-position-y: 120px;
+  }
+}
+
+@keyframes flag-sway {
+  0%,
+  100% {
+    transform: rotate(calc((var(--flag-tilt) - var(--flag-sway)) * 1deg)) scaleX(var(--flag-stretch));
+  }
+  50% {
+    transform: rotate(calc((var(--flag-tilt) + var(--flag-sway)) * 1deg)) scaleX(var(--flag-stretch));
   }
 }
 
