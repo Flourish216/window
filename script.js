@@ -102,6 +102,7 @@ const setSoundEnabled = async (enabled) => {
     soundEnabled = true;
     windowEl.classList.add("sound-on");
     soundToggle.setAttribute("aria-pressed", "true");
+    soundToggle.textContent = "sound on";
     if (masterGain) {
       masterGain.gain.setTargetAtTime(0.09, audioCtx.currentTime, 0.4);
     }
@@ -110,6 +111,7 @@ const setSoundEnabled = async (enabled) => {
     soundEnabled = false;
     windowEl.classList.remove("sound-on");
     soundToggle.setAttribute("aria-pressed", "false");
+    soundToggle.textContent = "sound";
     if (audioCtx && masterGain) {
       masterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.2);
       suspendTimer = setTimeout(() => {
