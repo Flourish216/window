@@ -194,6 +194,7 @@ const updateScene = ({ temperature, code, isDay, city, feels, wind, humidity }) 
   const condition = weatherMap(code);
   scene.dataset.condition = condition;
   scene.dataset.day = isDay ? "true" : "false";
+  scene.classList.toggle("night", !isDay);
   const round = (value) => (Number.isFinite(value) ? Math.round(value) : "--");
   const humidityLevel = Number.isFinite(humidity) ? clamp((humidity - 55) / 40, 0, 1) : 0;
   const rainBoost = condition === "rain" || condition === "thunder" ? 0.12 : 0;

@@ -99,6 +99,7 @@ body {
 .sun {
   background: radial-gradient(circle at 30% 30%, #fff6c6, #ffb347 70%);
   box-shadow: 0 0 50px rgba(255, 200, 120, 0.65);
+  z-index: 2;
 }
 
 .moon {
@@ -107,15 +108,16 @@ body {
   box-shadow: 0 0 36px rgba(163, 185, 255, 0.7);
   opacity: 0;
   overflow: hidden;
+  z-index: 2;
 }
 
 .moon::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: 8%;
   border-radius: 50%;
-  background: radial-gradient(circle at 20% 20%, rgba(27, 36, 64, 0.95), rgba(27, 36, 64, 1));
-  transform: translateX(32%);
+  background: radial-gradient(circle at 30% 30%, rgba(20, 26, 44, 0.95), rgba(20, 26, 44, 1));
+  transform: translateX(40%);
 }
 
 .cloud {
@@ -238,8 +240,8 @@ body {
   bottom: 58px;
   width: 56px;
   height: 26px;
-  background: rgba(255, 255, 255, 0.8);
-  clip-path: polygon(100% 50%, 0 0, 0 100%);
+  background: rgba(138, 187, 255, 0.85);
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.18);
   transform-origin: 100% 50%;
   transform: rotate(calc(var(--flag-tilt) * 1deg)) scaleX(var(--flag-stretch));
@@ -498,6 +500,19 @@ body {
 
 .scene[data-day="false"] .moon {
   opacity: 1;
+}
+
+.scene.night .sun {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.scene.night .moon {
+  opacity: 1;
+}
+
+.scene.night .sky {
+  opacity: 0.2;
 }
 
 @keyframes rain {
