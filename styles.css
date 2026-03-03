@@ -219,7 +219,7 @@ body {
   bottom: 26px;
   width: 90px;
   height: 100px;
-  z-index: 4;
+  z-index: 8;
 }
 
 .flag .pole {
@@ -228,8 +228,8 @@ body {
   bottom: 0;
   width: 2px;
   height: 82px;
-  background: rgba(255, 255, 255, 0.7);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.35), 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .flag .cloth {
@@ -238,8 +238,9 @@ body {
   bottom: 58px;
   width: 56px;
   height: 26px;
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.8);
   clip-path: polygon(100% 50%, 0 0, 0 100%);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.18);
   transform-origin: 100% 50%;
   transform: rotate(calc(var(--flag-tilt) * 1deg)) scaleX(var(--flag-stretch));
   animation: flag-sway var(--flag-speed) ease-in-out infinite;
